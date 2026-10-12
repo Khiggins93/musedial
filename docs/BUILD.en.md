@@ -15,11 +15,11 @@ python tools/build.py
 
 Bootstrap installs Arduino-ESP32 3.3.2 and fetches exact M5Dial 1.0.3, M5Unified 0.2.25 and M5GFX 0.2.32 commits. Its only source patch disables JPEG Bayer dithering. `dependencies.lock.json` records versions, FQBN and the Halloween resource hash. Do not copy dependencies from a private workspace.
 
-Build creates `dist/musedial-3.2.1-dreams/` and a ZIP with fixed flash segments, manifest, SHA256SUMS, installer and notices. It checks size and layout. The full `merged.bin` is not packaged; only its 8192-byte boot initialization segment is extracted.
+Build creates `dist/musedial-3.3.0-life/` and a ZIP with fixed flash segments, manifest, SHA256SUMS, installer and notices. It checks size and layout. The full `merged.bin` is not packaged; only its 8192-byte boot initialization segment is extracted.
 
 ```sh
-python tools/flash.py verify --release dist/musedial-3.2.1-dreams
-python tools/flash.py install --release dist/musedial-3.2.1-dreams --port PORT --device m5stack-dial
+python tools/flash.py verify --release dist/musedial-3.3.0-life
+python tools/flash.py install --release dist/musedial-3.3.0-life --port PORT --device m5stack-dial
 ```
 
 ## Optional animation regeneration

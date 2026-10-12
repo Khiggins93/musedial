@@ -11,13 +11,15 @@
 #include "play_effects.h"
 #include "companion.h"
 #include "companion_frames.h"
+#include "life.h"
+#include "life_tests.h"
 
 static constexpr int SCREEN = 240;
 static constexpr int AVATAR = 192;
 static constexpr int ORIGIN = (SCREEN - AVATAR) / 2;
 static constexpr uint32_t FRAME_MS = 50;
-static constexpr uint32_t AUTO_MS = 16000;
-static constexpr char VERSION[] = "3.2.1-dreams";
+static constexpr char VERSION[] = "3.3.0-life";
+static Life life;
 static PlayEffects play;
 static Companion companion;
 static M5Canvas canvas(&M5Dial.Display);
@@ -92,22 +94,44 @@ static void setMood(int next) {
     showHint();
 }
 
+static void startAutomatic() {
+    automatic = true; temporarySelection = false;
+    life.start(millis(), esp_random()); showHint();
+}
+
+static bool interact(bool greet = true) {
+    return life.interact(millis(), esp_random(), greet);
+}
+
+static bool wakeCharacter() {
+    if(!life.asleep()) return false;
+    interact(); wakeProtection = true; lastWakeAt = millis();
+    return true;
+}
+
 static bool setTheme(bool value) {
     if (value && !halloweenAssets.data) return false;
     halloween = value; petted = false; temporarySelection = false;
     automatic = true; activeClip = 0;
     setSleeping(false); setMood(0);
+    life = Life{}; life.halloween = halloween; startAutomatic();
     return true;
 }
 
 static void selectMood(int next) {
     automatic = false; setMood(next);
+    life.manual(millis());
     temporarySelection = halloween; selectionSince = millis();
 }
 
 static void setSleeping(bool value) {
+    interact(false);
     if(value) { play.clear(); companion.clear(); petted=false; }
-    if(sleeping && !value) { wakeProtection=true;lastWakeAt=millis(); }
+    if(sleeping && !value) {
+        wakeProtection=true;lastWakeAt=millis();
+        if(automatic)startAutomatic();
+    }
+    life.touching = life.consumeTouch = false;
     sleeping = value;
     M5Dial.Display.setBrightness(value ? 0 : brightness);
     if (!value) { modeSince = millis(); showHint(); }
@@ -115,6 +139,8 @@ static void setSleeping(bool value) {
 
 static void pet() {
     if (sleeping) setSleeping(false);
+    if(wakeCharacter())return;
+    interact();
     if(!halloween) { companion.pet(millis()); modeSince=millis(); return; }
     petted = true;
     petSince = millis();
@@ -123,20 +149,46 @@ static void pet() {
 
 static void turnWheel(int steps) {
     if(sleeping)setSleeping(false);
+    interact(false);
     if(play.casting)return;
     if(halloween && mood==9) {
         play.turn((unsigned)abs(steps),millis());
         temporarySelection=true; selectionSince=millis(); automatic=false; showHint();
+        life.manual(millis());
     } else selectMood(mood+(steps % moodCount()));
 }
 
 static void clickButton() {
+    if(wakeCharacter())return;
+    interact();
     if(play.casting)return;
     if(halloween && play.charge) {
-        if(play.cast(millis())) { petted=false; temporarySelection=false; automatic=true; modeSince=millis(); }
+        if(play.cast(millis())) { petted=false; startAutomatic(); modeSince=millis(); }
         showHint();return;
     }
     automatic=!automatic;temporarySelection=false;modeSince=millis();showHint();
+    if(automatic)startAutomatic();else life.manual(millis());
+}
+
+// Shared by physical touch and USB. The complete wake contact is consumed.
+static void touchDown(int x, int y) {
+    if(sleeping)setSleeping(false);
+    bool wasTouching = life.touching;
+    if(life.down(millis(),esp_random())) {
+        wakeProtection=true; lastWakeAt=millis(); return;
+    }
+    if(wakeProtection && life.state==Life::Greeting) {
+        life.consumeTouch=true; return;
+    }
+    if(halloween) { if(!wasTouching)pet(); }
+    else { companion.down(millis(),x,y); modeSince=millis(); }
+}
+
+static void touchUp() {
+    if(!life.touching)return;
+    if(!life.up(millis(),esp_random()) && !halloween) {
+        companion.up(millis()); modeSince=millis();
+    }
 }
 
 static void status() {
@@ -154,6 +206,7 @@ static void status() {
                   "\"bats_active\":%s,\"bats_count\":%d,\"temporary_selection\":%s,"
                   "\"magic_charge\":%u,\"casting\":%s,\"tickled\":%s,"
                   "\"dreaming\":%s,\"companion\":\"%s\",\"affection\":%u,\"gaze_x\":%d,\"gaze_y\":%d,"
+                  "\"life_state\":\"%s\",\"idle_ms\":%u,\"spontaneous_active\":%s,"
                   "\"network\":\"disabled\",\"audio\":\"disabled\"}\n",
                   VERSION, M5Dial.Display.getBoard() == m5::board_t::board_M5Dial ? "true" : "false",
                   displayReady ? "true" : "false", M5Dial.Display.width(), M5Dial.Display.height(),
@@ -166,7 +219,8 @@ static void status() {
                   halloween && petted ? "true" : "false", halloween && petted ? 4 : 0,
                   temporarySelection ? "true" : "false",play.charge,
                   play.casting ? "true" : "false",play.tickled ? "true" : "false",
-                  dreaming() ? "true" : "false", companion.label(), companion.affection, companion.gazeX, companion.gazeY);
+                  dreaming() ? "true" : "false", companion.label(), companion.affection, companion.gazeX, companion.gazeY,
+                  life.label(sleeping),life.idle(millis()),life.spontaneous ? "true" : "false");
 }
 
 // Three wing poses; silhouettes are rendered without allocation each frame.
@@ -296,11 +350,11 @@ static void handleCommand() {
     if (!strcmp(command, "status")) status();
     else if (!strcmp(command, "snapshot")) snapshot();
     else if (!strcmp(command, "selftest companion")) { Serial.println(testCompanion() ? "OK selftest companion" : "ERROR selftest companion"); }
-    else if (sscanf(command,"touch %d %d",&x,&y)==2 && x>=0 && x<240 && y>=0 && y<240 && !halloween) {
-        if(sleeping)setSleeping(false);
-        companion.down(millis(),x,y); modeSince=millis(); Serial.println("OK touch");
+    else if (!strcmp(command, "selftest life")) { Serial.println(testLife() ? "OK selftest life" : "ERROR selftest life"); }
+    else if (sscanf(command,"touch %d %d",&x,&y)==2 && x>=0 && x<240 && y>=0 && y<240) {
+        touchDown(x,y); Serial.println("OK touch");
     }
-    else if (!strcmp(command,"release") && !halloween) { companion.up(millis()); modeSince=millis(); Serial.println("OK release"); }
+    else if (!strcmp(command,"release")) { touchUp(); Serial.println("OK release"); }
     else if (!strcmp(command, "pet")) { pet(); Serial.println("OK pet"); }
     else if (!strcmp(command, "click")) { if(sleeping)setSleeping(false);else clickButton(); Serial.println("OK click"); }
     else if (!strcmp(command, "selftest play")) { Serial.println(testPlayEffects() ? "OK selftest play" : "ERROR selftest play"); }
@@ -316,12 +370,13 @@ static void handleCommand() {
         if(halloweenAssets.data)passed=passed && HalloweenAssets::validate(halloweenAssets.data,48)!=nullptr;
         Serial.println(passed ? "OK selftest assets" : "ERROR selftest assets");
     }
-    else if (!strcmp(command, "auto on")) { automatic = true; temporarySelection=false; modeSince = millis(); showHint(); Serial.println("OK auto on"); }
-    else if (!strcmp(command, "auto off")) { automatic = false; temporarySelection=false; showHint(); Serial.println("OK auto off"); }
+    else if (!strcmp(command, "auto on")) { startAutomatic(); Serial.println("OK auto on"); }
+    else if (!strcmp(command, "auto off")) { automatic = false; temporarySelection=false; life.manual(millis()); showHint(); Serial.println("OK auto off"); }
     else if (sscanf(command, "mode %d", &value) == 1 && value >= 0 && value < moodCount()) {
         selectMood(value); Serial.println("OK mode");
     } else if (sscanf(command, "brightness %d", &value) == 1 && value >= 20 && value <= 255) {
         brightness = value;
+        interact();
         if (!sleeping) M5Dial.Display.setBrightness(brightness);
         Serial.println("OK brightness");
     } else Serial.println("ERROR command");
@@ -354,6 +409,7 @@ void setup() {
     }
     halloweenAssets.begin();
     modeSince = millis();
+    startAutomatic();
     Serial.printf("MuseDial ready; reset_reason=%d\n", (int)esp_reset_reason());
     status();
 }
@@ -361,27 +417,28 @@ void setup() {
 void loop() {
     M5Dial.update();
     uint32_t now = millis();
-    if(M5Dial.BtnA.wasPressed())++buttonCount;
+    if(M5Dial.BtnA.wasPressed()) {
+        ++buttonCount;
+        if(!life.asleep())interact();
+    }
     // Touch can precede the mechanical click on the same screen press.
     if(wakeProtection && uint32_t(now-lastWakeAt)>=300)wakeProtection=false;
-    switch(buttonActions.update(M5Dial.BtnA.isPressed(),now,sleeping || wakeProtection)) {
-        case ButtonAction::Wake: setSleeping(false); break;
+    switch(buttonActions.update(M5Dial.BtnA.isPressed(),now,sleeping || wakeProtection || life.asleep())) {
+        case ButtonAction::Wake: if(sleeping)setSleeping(false);else wakeCharacter(); break;
         case ButtonAction::Theme: if(!setTheme(!halloween))showHint(); break;
         case ButtonAction::Sleep: setSleeping(!sleeping); break;
         case ButtonAction::Click: clickButton(); break;
         default: break;
     }
     auto touch = M5Dial.Touch.getDetail();
-    if(halloween) {
-        if(touch.wasPressed() && !M5Dial.BtnA.isPressed()) { ++touchCount; pet(); }
-    } else if(!M5Dial.BtnA.isPressed()) {
-        if(touch.wasPressed()) {
-            ++touchCount; if(sleeping)setSleeping(false);
-            companion.down(now,touch.x,touch.y); modeSince=now;
+    if(!M5Dial.BtnA.isPressed()) {
+        if(touch.wasPressed()) { ++touchCount; touchDown(touch.x,touch.y); }
+        if(touch.isPressed() && life.touching) {
+            life.lastInteraction=now;
+            if(!life.consumeTouch && !halloween)companion.move(touch.x,touch.y);
         }
-        if(touch.isPressed() && companion.touching)companion.move(touch.x,touch.y);
-        if(touch.wasReleased()) { companion.up(now); modeSince=now; }
     } else if(companion.touching)companion.clear();
+    if(touch.wasReleased())touchUp();
     long position = M5Dial.Encoder.read();
     long delta = position - encoderBase;
     if (delta >= 4 || delta <= -4) {
@@ -405,11 +462,13 @@ void loop() {
     now = millis();  // Commands/snapshots may advance time or reset modeSince.
     play.update(now);
     companion.update(now);
-    if(temporarySelection && !sleeping && !petted && uint32_t(now-selectionSince)>=10000) {
-        temporarySelection=false; automatic=true; setMood(mood+1);
-    }
     if(petted && uint32_t(now-petSince)>=(halloween ? 5000u : 4000u))petted=false;
-    if (automatic && !sleeping && !petted && !companion.active() && !play.casting && now - modeSince >= (halloween ? 8000u : AUTO_MS)) setMood(mood + 1);
+    bool busy=petted || companion.active() || play.casting || M5Dial.BtnA.isPressed();
+    if(temporarySelection && !sleeping && !busy && uint32_t(now-selectionSince)>=10000)startAutomatic();
+    if(automatic && !sleeping) {
+        int next=life.tick(now,busy,esp_random());
+        if(next>=0) { mood=next; modeSince=now; }
+    }
     if (displayReady && !sleeping && now - lastFrame >= FRAME_MS) {
         lastFrame = now;
         drawFrame(millis());
