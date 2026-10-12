@@ -88,3 +88,45 @@ I verified all four sleepy expressions, effect cancellation and recovery through
 22 USB checks. Four ten-second measurement windows yielded 19.610–19.727 fps,
 constant free heap and no observed decoder errors or resets. These results are
 separate from the five-minute 3.2 measurements above.
+
+<!-- LIFE_3_3_VALIDATION_START -->
+## Vida propia / Life 3.3.0
+
+Probé esta versión en mi Dial el 2026-10-12 (America/Bogota). Conservé el
+snapshot 3.2.1 y verifiqué un respaldo completo de 8 MiB contra el dispositivo;
+sus cinco segmentos coincidieron con los hashes del snapshot antes de instalar.
+La aplicación que instalé ocupa **2.869.616 bytes de 3.342.336**. No cambié
+recursos gráficos ni particiones.
+
+Pasaron **74 comprobaciones generales** y **21 de caricias, mirada y abrazo**.
+Después completé esta medición continua, sin capturas ni reinicios entre temas:
+
+| Tema | Duración | FPS mínimo, ventanas de al menos 5 s | Memoria libre mínima/máxima |
+|---|---:|---:|---:|
+| Normal | 900.047 s | 19.517 | 219008 / 219008 bytes |
+| Halloween | 900.390 s | 19.536 | 219008 / 219008 bytes |
+
+Observé cero errores de decodificación y cero reinicios. En ambos temas
+comprobé por USB relajación, bostezo, sueño con Z, contacto de despertar
+consumido, reacción posterior, botón conservando automático y selección con
+rueda. El brillo permaneció en 150/255. Excluí un intento anterior interrumpido
+por mis toques y reinicié la medición completa.
+
+Las quince pruebas de host, compilación y comprobación del paquete pasaron en
+[CI del binario probado](https://github.com/Khiggins93/musedial/actions/runs/38309411402)
+y [CI de las herramientas](https://github.com/Khiggins93/musedial/actions/runs/38311108484).
+También compilé en Windows: 2.869.696 bytes. Las compilaciones entre sistemas
+no son idénticas byte a byte; reservé para la release el binario de CI que probé.
+
+**Pendiente antes de publicar la release:** comprobación física del despertar
+táctil, por botón y con rueda. Distingo estas comprobaciones de las simulaciones
+USB anteriores.
+
+I completed the continuous thirty-minute measurement above with constant free
+heap, unchanged brightness and no observed resets or decoder errors. USB wake
+and interaction checks passed. Physical touch, button and wheel wake checks
+remain pending before release publication. I excluded an earlier attempt
+interrupted by my touches and restarted the complete measurement. I intend to
+publish the exact CI binary tested on the device; the separate Windows build
+has a different hash. [Reproduction instructions](LIFE.en.md).
+<!-- LIFE_3_3_VALIDATION_END -->
