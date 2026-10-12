@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+vendor/
+build/
+dist/
+backups/
+local/
+assets/rendered*/
+assets/*.blend1
+.DS_Store
+*.log

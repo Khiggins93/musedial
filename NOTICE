@@ -1,0 +1,15 @@
+MuseDial
+Copyright 2026 Khiggins93 and contributors
+
+Independent offline community firmware for M5Stack Dial.
+Project-authored code, documentation and original contributions to procedural
+scenes and generated assets are distributed under Apache License 2.0.
+This grant covers only rights held by the contributors. It does not grant
+rights in third-party characters, trademarks or trade dress.
+
+The character is a procedural fan-art recreation visually inspired by Muse.
+No original Meta model, SDK avatar code, animation files or reference photographs
+are included. Muse and Meta names identify the visual inspiration; M5Stack Dial
+identifies the target hardware. This project is not endorsed by those companies.
+
+Dependencies retain their upstream licenses. See THIRD_PARTY_NOTICES.md.

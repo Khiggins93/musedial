@@ -1,0 +1,22 @@
+{
+  "arduino_cli": "1.5.1",
+  "esp32_core": "3.3.2",
+  "blender": "5.2.1",
+  "version": "3.1.1-community",
+  "fqbn": "esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=8M,PartitionScheme=default_8MB,PSRAM=disabled,FlashMode=qio,EraseFlash=none",
+  "libraries": {
+    "M5Dial": {
+      "version": "1.0.3",
+      "commit": "533c9d0198e72621d55a4d35f726d3d53a7e1431"
+    },
+    "M5Unified": {
+      "version": "0.2.25",
+      "commit": "fd40d58b8405ad1e7ed7afab548dab5e7cec5bbb"
+    },
+    "M5GFX": {
+      "version": "0.2.32",
+      "commit": "c5a3fefad0b38a52cc750e2c4761e339a69a7208"
+    }
+  },
+  "assets_sha256": "6693908d1761effd706001bf67f287fb5aa94e03e2199a158abd9d2cde2f8749"
+}
