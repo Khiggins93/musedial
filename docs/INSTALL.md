@@ -33,7 +33,7 @@ python tools/flash.py verify --release .
 python tools/flash.py install --release . --port PUERTO --device m5stack-dial
 ```
 
-Se verifican hashes, offsets, límites, tabla de particiones y CRC de recursos. Antes de escribir se lee toda la flash y se compara su digest con el del dispositivo. Se guarda en `backups/FECHA-ID/`: **conserva esta carpeta de forma privada**, puede contener configuraciones y credenciales del firmware anterior. Si falla el respaldo, no se escribe el firmware.
+Se verifican hashes, offsets, límites, tabla de particiones y CRC de recursos. Antes de escribir se lee toda la flash por sectores y se compara su digest con el del dispositivo; esta lectura puede tardar varios minutos. Se guarda en `backups/FECHA-ID/`: **conserva esta carpeta de forma privada**, puede contener configuraciones y credenciales del firmware anterior. Si falla el respaldo, no se escribe el firmware; reinicia el equipo para volver al programa anterior antes de reintentar.
 
 La instalación escribe bootloader, tabla, inicialización de arranque, aplicación y recursos. Conserva los rangos NVS/SPIFFS, pero sustituye el segundo slot de aplicación: no permite OTA. No se distribuye una imagen completa con datos de otro dispositivo. El modelo empieza en normal; mantén pulsado más de tres segundos para Halloween.
 

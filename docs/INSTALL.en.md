@@ -29,7 +29,7 @@ python tools/flash.py verify --release .
 python tools/flash.py install --release . --port PORT --device m5stack-dial
 ```
 
-The installer validates hashes, fixed offsets, partition layout, size limits and resource CRC. It reads the complete existing flash, compares the device digest and saves a verified **private** backup in `backups/DATE-ID/` before writing. Keep it: it may contain credentials or personal configuration. A failed backup prevents installation.
+The installer validates hashes, fixed offsets, partition layout, size limits and resource CRC. It reads the complete existing flash in sectors, compares the device digest and saves a verified **private** backup in `backups/DATE-ID/` before writing; allow several minutes for this read. Keep it: it may contain credentials or personal configuration. A failed backup prevents installation; reset the board to boot the previous program before retrying.
 
 Installation writes the bootloader, partition table, boot initialization, application and Halloween resources. NVS/SPIFFS ranges are retained, but the second application slot becomes resource storage: **no OTA**. No full-flash image containing someone else's data is distributed. Boot starts in normal mode; hold the button longer than three seconds for Halloween.
 
