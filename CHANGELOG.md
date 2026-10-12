@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.3.0-life — 2026-10-12 (America/Bogota)
+
+- Reemplacé el recorrido automático por gestos tranquilos, relajación y sueño visible con Z en ambos temas, sin cambiar el brillo.
+- Añadí el saludo al despertar y el consumo completo del primer contacto; conservé selección manual, efectos y controles del botón.
+- Separé sueño del personaje y pantalla apagada; amplié el diagnóstico con estado vital, inactividad y gesto espontáneo.
+- Incorporé pruebas deterministas del reloj y una prueba USB continua de treinta minutos, sin añadir recursos gráficos ni modificar particiones.
+
+I replaced sequential auto cycling with quiet gestures, relaxation and visible
+sleep in both themes. I added wake greetings, full wake-contact consumption,
+life diagnostics, deterministic clock tests and a thirty-minute device test.
+
 ## 3.2.1-dreams — 2026-10-12 (America/Bogota)
 
 - Añadí seis Z animadas en las expresiones de sueño de ambos temas, con ascenso, crecimiento y desvanecimiento.

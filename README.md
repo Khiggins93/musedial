@@ -12,6 +12,13 @@ Desarrollo este proyecto de forma independiente, inspirado visualmente en Muse. 
 
 ## Más cariño en el modo normal
 
+En **3.3 — Vida propia** cambié el automático de ambos temas por rutinas tranquilas:
+Muse hace un gesto breve cada 20–35 segundos, se relaja tras tres minutos sin
+interacción y, a los cinco, bosteza y se queda dormido **visible, con sus Z y el
+mismo brillo**. Al tocarlo despierta y saluda; ese primer contacto no activa una
+caricia ni un abrazo. También puedo despertarlo con el botón o la rueda.
+Explico los detalles y cómo probarlos en [Vida propia](docs/LIFE.md).
+
 En las expresiones de sueño de ambos temas añadí unas **Z animadas** que suben y se desvanecen junto al personaje.
 
 Añadí miradas que siguen nueve zonas de la pantalla, caricias progresivas, un abrazo y cosquillas. Toca sin presionar el botón mecánico; los [controles](docs/CONTROLS.md) explican los tiempos de cada gesto.
@@ -41,7 +48,7 @@ También puedes [compilar desde las fuentes](docs/BUILD.md), sin instalar Blende
 |---|---|
 | Mantener más de 3 s | Alternar normal/Halloween una vez; despertar y activar automático |
 | Soltar entre 1 y 3 s | Alternar reposo |
-| Pulsación breve | Alternar automático; si estaba dormido, solo despertar |
+| Pulsación breve | Alternar automático; si duerme por inactividad, saludar y conservar automático; si la pantalla está apagada, solo encenderla |
 | Rueda | Elegir expresión; en Halloween vuelve al automático tras 10 s |
 | Toque y deslizamiento suave | Sigue tu dedo con la mirada en normal; al soltar, caricia |
 | Caricias normales sucesivas | Sonrisa, cariño y abrazo; contacto táctil de 2 s para abrazo directo |

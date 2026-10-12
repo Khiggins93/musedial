@@ -13,7 +13,9 @@
 | Touch / Toque | Wake and pet; normal gestures described below, four Halloween bats for 5 seconds. |
 | Triple touch / Tres toques | At most 900 ms between taps: 5-second Halloween tickles, laugh and faster wavy bat paths. More taps restart duration; no new objects accumulate. |
 
-Theme changes, selecting another mood and sleep clear new effects. Changing theme enables auto. Automatic expressions advance every 16 seconds in normal and 8 seconds in Halloween, deferring while petting or casting.
+Theme changes, selecting another mood and screen-off sleep clear effects. Changing theme enables auto and starts awake/calm. In 3.3 I replaced sequential automatic cycling with [life routines](LIFE.en.md): a two-second gesture every 20–35 seconds, calm after three idle minutes, a two-second yawn after five, then visible sleep. Petting, hugs, tickles and spells take priority. [Explicación en español](LIFE.md).
+
+Character sleep is separate from display-off sleep. Touch or a short button press wakes an idle-sleeping character with a two-second greeting and keeps auto enabled. I consume the entire first wake touch, including a long hold and release. The wheel wakes and immediately selects an expression. A manually selected sleepy expression remains manual and accepts normal petting.
 
 ## Caricias normales / Normal companionship
 
@@ -52,7 +54,9 @@ python tools/diagnose.py --port PORT "theme halloween"
 python tools/diagnose.py --port PORT --capture local/screen.png
 ```
 
-Commands: `status`, `snapshot`, `theme normal`, `theme halloween`, `mode N`, `pet`, `sleep`, `wake`, `auto on`, `auto off`, `brightness 20..255`, `turn -100..100` (nonzero), `click`, `selftest input`, `selftest assets`, `selftest play`, `selftest companion`, `touch X Y` (normal only, coordinates 0–239), `release` (normal only). Repeated `touch` commands move an existing simulated contact. `pet` simulates an immediate centered touch/release.
+Commands: `status`, `snapshot`, `theme normal`, `theme halloween`, `mode N`, `pet`, `sleep`, `wake`, `auto on`, `auto off`, `brightness 20..255`, `turn -100..100` (nonzero), `click`, `selftest input`, `selftest assets`, `selftest play`, `selftest companion`, `selftest life`, `touch X Y` (both themes, coordinates 0–239), `release`. Repeated `touch` commands move an existing simulated contact. `pet` simulates an immediate centered touch/release; while idle-asleep it only wakes and greets.
+
+I added `life_state` (`manual`, `awake`, `relaxed`, `yawning`, `asleep`, `greeting`, `screen_off`), `idle_ms` and `spontaneous_active` to `status`. Diagnostic requests do not reset inactivity. There is no public accelerated-clock command.
 
 `turn` and `click` use the physical input handlers but do not prove electrical operation. `snapshot` streams a 240 × 240 RGB565LE framebuffer and pauses rendering; exclude it from fps measurements.
 

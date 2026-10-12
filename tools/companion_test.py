@@ -40,7 +40,8 @@ def main():
             check('hold touch hug',status()['companion']=='ABRAZO')
             cmd('turn 1');check('wheel cancellation',status()['companion']=='NINGUNO')
             cmd('touch 220 20');cmd('theme halloween');check('theme cancellation',status()['companion']=='NINGUNO')
-            check('halloween rejects normal touch',cmd('touch 120 120')=='ERROR command')
+            check('halloween accepts touch',cmd('touch 120 120')=='OK touch')
+            cmd('release')
             cmd('theme normal');check('invalid coordinate',cmd('touch 240 0')=='ERROR command')
             # No captures during timed coverage. Exercise every new gesture.
             start=time.monotonic();i=0;previous=status()
