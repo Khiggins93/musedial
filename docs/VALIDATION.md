@@ -56,13 +56,15 @@ compilador nativo; sí pasó en Linux y como `selftest companion` en el disposit
 
 ![Captura real del abrazo](images/normal-hug.png)
 
-Estas comprobaciones automatizadas usan USB y no sustituyen una confirmación
-física del nuevo seguimiento táctil. Esa confirmación queda pendiente. La primera
+Estas comprobaciones automatizadas usan USB. Además, confirmé físicamente que
+la mirada sigue el dedo y que mantener el contacto y soltar activa el abrazo.
+Las demás interacciones nuevas de esta tabla se comprobaron por USB. La primera
 consulta USB inmediatamente después de flashear agotó su tiempo de espera;
 las pruebas posteriores confirmaron el arranque y no observaron reinicios.
 
 I measured the same results above on my original Dial: 74 existing regression
 checks, new companion interaction checks and a separate five-minute automated
-run. This is not a new 30-minute soak or a physical touch confirmation.
+run. I also physically confirmed gaze tracking and the hold/release hug.
+This is not a new 30-minute soak; the remaining new interactions were tested over USB.
 The gaze uses nine discrete rendered poses. Finite gesture clips ease in/out;
 transitions from arbitrary base expressions are not cross-faded.
