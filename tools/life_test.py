@@ -28,6 +28,8 @@ def main():
 
     try:
         with port_open(args.port) as port, stream.open('w', encoding='utf-8') as log:
+            # Bound observer stalls so a two-second yawn is not lost in readline.
+            port.timeout = .25
             def cmd(command):
                 result = request(port, command)
                 if isinstance(result, str) and result.startswith('ERROR'):
@@ -74,6 +76,7 @@ def main():
                 phase = 0
                 held_at = None
                 last_spontaneous = None
+                last_spontaneous_at = None
                 was_spontaneous = False
                 while time.monotonic() - start < 900:
                     time.sleep(.5)
@@ -98,8 +101,13 @@ def main():
                         print(theme, s['life_state'], 'idle_ms', s['idle_ms'], flush=True)
                     if s['spontaneous_active'] and not was_spontaneous:
                         allowed = (1, 2, 5, 6) if theme == 'normal' else (1, 2, 4, 3)
-                        check('eligible nonrepeating gesture', s['mood'] in allowed and s['mood'] != last_spontaneous)
+                        check('eligible gesture', s['mood'] in allowed)
+                        # A missing observation can hide an intervening gesture.
+                        # Exact nonrepeat behavior is also tested with a fake clock.
+                        if last_spontaneous_at is not None and s['uptime_ms']-last_spontaneous_at <= 36000:
+                            check('adjacent observed gestures differ', s['mood'] != last_spontaneous)
                         last_spontaneous = s['mood']
+                        last_spontaneous_at = s['uptime_ms']
                     was_spontaneous = s['spontaneous_active']
                     if phase == 0 and s['life_state'] == 'asleep':
                         summary['first_sleep_ms'] = s['idle_ms']
