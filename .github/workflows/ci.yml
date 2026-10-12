@@ -17,7 +17,7 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - run: python tools/bootstrap.py
       - run: python tools/build.py
-      - run: python tools/flash.py verify --release dist/musedial-3.2.0-companion
+      - run: python tools/flash.py verify --release dist/musedial-3.2.1-dreams
       - uses: actions/upload-artifact@v4
         with:
           name: musedial-community

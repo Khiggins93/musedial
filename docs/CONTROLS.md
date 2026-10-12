@@ -33,6 +33,15 @@ Normal `mode 0..8`: TRANQUILO, CURIOSO, PENSANDO, ANIMADO, DORMILON, FELIZ, SALU
 
 Halloween `mode 0..11`: TRANQUILO, CURIOSO, TRAVIESO, SALUDO, RISITA, SORPRESA, BOO, CARCAJADA, BAILE, HECHIZO, DORMILON, BOSTEZO.
 
+En 3.2.1 añadí seis letras **Z** que ascienden y se desvanecen en DORMILON/SUENO
+del modo normal y DORMILON/BOSTEZO de Halloween. Se ocultan durante las caricias
+y otros gestos, al elegir otra expresión y al apagar la pantalla. El reposo del
+botón sigue apagando la pantalla; las Z acompañan las animaciones de sueño.
+
+Six rising, fading **Z** sprites accompany normal modes 4/8 and Halloween modes
+10/11. They disappear during reactions and screen-off sleep. `status` adds
+`dreaming` to identify when this visual effect is active.
+
 ## USB
 
 115200 baud, newline-terminated commands. Use the repository's diagnostic tool:

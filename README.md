@@ -12,6 +12,8 @@ Desarrollo este proyecto de forma independiente, inspirado visualmente en Muse. 
 
 ## Más cariño en el modo normal
 
+En las expresiones de sueño de ambos temas añadí unas **Z animadas** que suben y se desvanecen junto al personaje.
+
 Añadí miradas que siguen nueve zonas de la pantalla, caricias progresivas, un abrazo y cosquillas. Toca sin presionar el botón mecánico; los [controles](docs/CONTROLS.md) explican los tiempos de cada gesto.
 
 <img src="docs/images/companion.gif" width="288" alt="Miradas, caricias y abrazo del Muse normal">

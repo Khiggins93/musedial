@@ -17,7 +17,7 @@ static constexpr int AVATAR = 192;
 static constexpr int ORIGIN = (SCREEN - AVATAR) / 2;
 static constexpr uint32_t FRAME_MS = 50;
 static constexpr uint32_t AUTO_MS = 16000;
-static constexpr char VERSION[] = "3.2.0-companion";
+static constexpr char VERSION[] = "3.2.1-dreams";
 static PlayEffects play;
 static Companion companion;
 static M5Canvas canvas(&M5Dial.Display);
@@ -59,6 +59,30 @@ static size_t commandLen = 0;
 static bool commandOverflow = false;
 
 static void showHint() { hintUntil = millis() + 2500; }
+
+static bool dreaming() {
+    return !sleeping && !petted && !play.casting
+        && (halloween ? (mood==10 || mood==11)
+                      : (!companion.active() && (mood==4 || mood==8)));
+}
+
+// Six staggered Z sprites rise beside the hood, inside the circular display.
+// Reuse the existing canvas: no extra buffers, fonts or allocations.
+static void drawDreams(uint32_t elapsed) {
+    for(unsigned i=0;i<6;++i) {
+        float t=((elapsed%3000+i*500)%3000)/3000.0f;
+        float fade=fminf(1.0f,fminf(t*8.0f,(1.0f-t)*4.0f));
+        if(fade<.02f)continue;
+        int x=174+lroundf(12*t+3*sinf(t*6.2831853f));
+        int y=103-lroundf(64*t), size=5+lroundf(4*t);
+        uint16_t ink=canvas.color565(lroundf((halloween?212:165)*fade),
+                                     lroundf((halloween?144:180)*fade),255*fade);
+        canvas.drawFastHLine(x,y,size,ink);
+        canvas.drawFastHLine(x,y+size-1,size,ink);
+        canvas.drawLine(x+size-1,y,x,y+size-1,ink);
+        if(size>=7)canvas.drawLine(x+size-2,y,x,y+size-2,ink);
+    }
+}
 
 static void setMood(int next) {
     play.clear(); companion.clear();
@@ -129,7 +153,7 @@ static void status() {
                   "\"theme\":\"%s\",\"halloween_ready\":%s,\"asset_error\":\"%s\","
                   "\"bats_active\":%s,\"bats_count\":%d,\"temporary_selection\":%s,"
                   "\"magic_charge\":%u,\"casting\":%s,\"tickled\":%s,"
-                  "\"companion\":\"%s\",\"affection\":%u,\"gaze_x\":%d,\"gaze_y\":%d,"
+                  "\"dreaming\":%s,\"companion\":\"%s\",\"affection\":%u,\"gaze_x\":%d,\"gaze_y\":%d,"
                   "\"network\":\"disabled\",\"audio\":\"disabled\"}\n",
                   VERSION, M5Dial.Display.getBoard() == m5::board_t::board_M5Dial ? "true" : "false",
                   displayReady ? "true" : "false", M5Dial.Display.width(), M5Dial.Display.height(),
@@ -142,7 +166,7 @@ static void status() {
                   halloween && petted ? "true" : "false", halloween && petted ? 4 : 0,
                   temporarySelection ? "true" : "false",play.charge,
                   play.casting ? "true" : "false",play.tickled ? "true" : "false",
-                  companion.label(), companion.affection, companion.gazeX, companion.gazeY);
+                  dreaming() ? "true" : "false", companion.label(), companion.affection, companion.gazeX, companion.gazeY);
 }
 
 // Three wing poses; silhouettes are rendered without allocation each frame.
@@ -210,6 +234,7 @@ static void drawFrame(uint32_t now) {
     }
     if (petted && halloween)drawBats(clipTime,frame);
     if(halloween)drawMagic(now);
+    if(dreaming())drawDreams(now-modeSince);
     if (!halloween && companion.gesture==Companion::Hug) {
         clipTime=now-companion.gestureAt;
         for (int i = 0; i < 3; ++i) {

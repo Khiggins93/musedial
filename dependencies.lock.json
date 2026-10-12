@@ -2,7 +2,7 @@
   "arduino_cli": "1.5.1",
   "esp32_core": "3.3.2",
   "blender": "5.2.1",
-  "version": "3.2.0-companion",
+  "version": "3.2.1-dreams",
   "fqbn": "esp32:esp32:esp32s3:USBMode=hwcdc,CDCOnBoot=cdc,FlashSize=8M,PartitionScheme=default_8MB,PSRAM=disabled,FlashMode=qio,EraseFlash=none",
   "libraries": {
     "M5Dial": {

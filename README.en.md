@@ -12,6 +12,8 @@ I develop this project independently, with visual inspiration from Muse. I'm not
 
 ## More personality in normal mode
 
+I added rising, fading **Z sprites** to the sleepy expressions in both themes.
+
 I added gaze tracking across nine screen zones, progressive petting, a hug and tickles. Touch lightly without clicking the mechanical button; see [controls](docs/CONTROLS.md) for gesture timings.
 
 <img src="docs/images/companion.gif" width="288" alt="Normal Muse gaze, petting and hug preview">

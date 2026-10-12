@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.1-dreams — 2026-10-12 (America/Bogota)
+
+- Añadí seis Z animadas en las expresiones de sueño de ambos temas, con ascenso, crecimiento y desvanecimiento.
+- El efecto se oculta durante las reacciones y el reposo; no requiere recursos Blender nuevos ni memoria adicional para imágenes.
+
 ## 3.2.0-companion — 2026-10-12 (America/Bogota)
 
 - Añadí nueve direcciones de mirada 3D, caricias progresivas, abrazo y cosquillas al Muse normal.
