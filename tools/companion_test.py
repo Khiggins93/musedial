@@ -51,7 +51,7 @@ def main():
                 elif i%4==2:
                     cmd('pet');time.sleep(.7);cmd('pet');time.sleep(.7);cmd('pet')
                 else:cmd('pet');cmd('pet');cmd('pet')
-                time.sleep(1.2);s=status()
+                time.sleep(2.2);s=status()
                 fps=(s['frames']-previous['frames'])*1000/(s['uptime_ms']-previous['uptime_ms'])
                 report['samples'].append({'fps':fps,'heap':s['free_heap'],'uptime_ms':s['uptime_ms'],'companion':s['companion']})
                 check('fps >=18',fps>=18)

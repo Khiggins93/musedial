@@ -91,7 +91,7 @@ static void setSleeping(bool value) {
 
 static void pet() {
     if (sleeping) setSleeping(false);
-    if(!halloween) { companion.pet(millis()); return; }
+    if(!halloween) { companion.pet(millis()); modeSince=millis(); return; }
     petted = true;
     petSince = millis();
     if(halloween)play.touch(petSince);
@@ -273,9 +273,9 @@ static void handleCommand() {
     else if (!strcmp(command, "selftest companion")) { Serial.println(testCompanion() ? "OK selftest companion" : "ERROR selftest companion"); }
     else if (sscanf(command,"touch %d %d",&x,&y)==2 && x>=0 && x<240 && y>=0 && y<240 && !halloween) {
         if(sleeping)setSleeping(false);
-        companion.down(millis(),x,y); Serial.println("OK touch");
+        companion.down(millis(),x,y); modeSince=millis(); Serial.println("OK touch");
     }
-    else if (!strcmp(command,"release") && !halloween) { companion.up(millis()); Serial.println("OK release"); }
+    else if (!strcmp(command,"release") && !halloween) { companion.up(millis()); modeSince=millis(); Serial.println("OK release"); }
     else if (!strcmp(command, "pet")) { pet(); Serial.println("OK pet"); }
     else if (!strcmp(command, "click")) { if(sleeping)setSleeping(false);else clickButton(); Serial.println("OK click"); }
     else if (!strcmp(command, "selftest play")) { Serial.println(testPlayEffects() ? "OK selftest play" : "ERROR selftest play"); }
@@ -352,10 +352,10 @@ void loop() {
     } else if(!M5Dial.BtnA.isPressed()) {
         if(touch.wasPressed()) {
             ++touchCount; if(sleeping)setSleeping(false);
-            companion.down(now,touch.x,touch.y);
+            companion.down(now,touch.x,touch.y); modeSince=now;
         }
         if(touch.isPressed() && companion.touching)companion.move(touch.x,touch.y);
-        if(touch.wasReleased())companion.up(now);
+        if(touch.wasReleased()) { companion.up(now); modeSince=now; }
     } else if(companion.touching)companion.clear();
     long position = M5Dial.Encoder.read();
     long delta = position - encoderBase;
