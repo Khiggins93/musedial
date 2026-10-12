@@ -30,3 +30,39 @@ The repository test suite validates resource checksums, corrupt/truncated images
 These are USB/software checks on real hardware, not a new physical-user confirmation of wheel/touch/button operation. The longer five-minute baseline measurement above belongs to 3.1 and is not attributed to this public build. Windows hardware flashing and Linux clean compilation were verified; macOS hardware operation was not tested.
 
 I have excluded raw local logs, device identifiers, flash backups and personal paths from the repository. You can inspect the CI workflow output in the public Actions tab.
+
+## Companion 3.2.0
+
+Para esta versión probé el firmware compilado en Windows en mi Dial el
+2026-10-12 (America/Bogota). Conservé un respaldo completo verificado de la
+flash anterior antes de instalarlo.
+
+| Comprobación | Resultado |
+|---|---|
+| Regresión de ambos temas | 74 comprobaciones USB correctas |
+| Interacciones nuevas | 21 comprobaciones funcionales: miradas, progresión, abrazo, cosquillas, expiración y cancelación |
+| Prueba continua adicional | Bucle de 300 s; 115 muestras, sin capturas durante la medición |
+| Fluidez durante la prueba | 19.504–19.735 fps |
+| Memoria libre | 219072 bytes, constante |
+| Errores de decodificación / reinicios durante las pruebas | 0 / 0 |
+| Recursos nuevos | 145 JPEG válidos, 661926 bytes; hash fijado en dependencias |
+| Aplicación Windows instalada | 2866272 bytes de una partición de 3342336 bytes |
+| CI Linux | 15 pruebas, compilación y verificación del paquete correctas |
+
+El CI del código probado está disponible en
+[GitHub Actions](https://github.com/Khiggins93/musedial/actions/runs/38303272701).
+En Windows, 14 pruebas de host pasaron y la prueba C++ se omitió por falta de
+compilador nativo; sí pasó en Linux y como `selftest companion` en el dispositivo.
+
+![Captura real del abrazo](images/normal-hug.png)
+
+Estas comprobaciones automatizadas usan USB y no sustituyen una confirmación
+física del nuevo seguimiento táctil. Esa confirmación queda pendiente. La primera
+consulta USB inmediatamente después de flashear agotó su tiempo de espera;
+las pruebas posteriores confirmaron el arranque y no observaron reinicios.
+
+I measured the same results above on my original Dial: 74 existing regression
+checks, new companion interaction checks and a separate five-minute automated
+run. This is not a new 30-minute soak or a physical touch confirmation.
+The gaze uses nine discrete rendered poses. Finite gesture clips ease in/out;
+transitions from arbitrary base expressions are not cross-faded.
