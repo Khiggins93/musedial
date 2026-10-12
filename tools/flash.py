@@ -40,20 +40,22 @@ def read_backup(stub,mac,port):
     """Reconnect only into the loader on transient USB failure; never write flash."""
     data=bytearray()
     try:
-        # Bounded 16 KiB reads avoid native USB/JTAG receive stalls on Windows.
-        for offset in range(0,8388608,16384):
+        # One flash sector per read bounds native USB/JTAG receive bursts.
+        for offset in range(0,8388608,4096):
             for attempt in range(4):
                 try:
-                    chunk=stub.read_flash(offset,16384)
-                    if len(chunk)!=16384 or hashlib.md5(chunk).hexdigest()!=stub.flash_md5sum(offset,16384):raise RuntimeError('Incomplete/corrupt backup chunk')
+                    chunk=stub.read_flash(offset,4096)
+                    # esptool.read_flash already verifies each returned chunk's MD5.
+                    if len(chunk)!=4096:raise RuntimeError('Incomplete backup chunk')
                     break
                 except Exception:
+                    print(f'Backup retry at {offset:#x}, attempt {attempt+1}/4',flush=True)
                     stub._port.close()
                     if attempt==3:raise
                     time.sleep(.5);stub,connected_mac=connect(port)
                     if connected_mac!=mac:raise ValueError('Device changed during backup')
             data.extend(chunk)
-            if len(data)%524288==0:print('Verified backup bytes:',len(data),flush=True)
+            if len(data)%65536==0:print('Verified backup bytes:',len(data),flush=True)
         if hashlib.md5(data).hexdigest()!=stub.flash_md5sum(0,len(data)):raise RuntimeError('Device backup digest mismatch')
         return data
     finally:stub._port.close()
