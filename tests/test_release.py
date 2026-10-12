@@ -1,8 +1,9 @@
 import hashlib,json,shutil,struct,subprocess,sys,tempfile,unittest,zlib
+from unittest.mock import patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT/'tools'))
 from halloween_format import validate_assets,partition_image,layout
-from flash import validate_release,validate_backup,SEGMENTS
+from flash import validate_release,validate_backup,read_backup,SEGMENTS
 
 class Resources(unittest.TestCase):
     def test_committed_resource(self):
@@ -64,4 +65,23 @@ class Input(unittest.TestCase):
         self.assertIn('0xa77dff,0x5cb8ff,0xe07bff,0x6ff0bf,0x7c72d0,0xa77dff,0xa77dff,0x5cb8ff,0x7c72d0',source)
         self.assertNotIn('muse_pixel',source)
         self.assertFalse((ROOT/'firmware/MuseDial/muse_pixel.c').exists())
+
+class BackupRead(unittest.TestCase):
+    class Stub:
+        def __init__(self,fail=False):self.fail=fail;self.closed=False;self._port=self
+        def close(self):self.closed=True
+        def read_flash(self,offset,size):
+            if self.fail:raise RuntimeError('Simulated USB interruption')
+            return b'\xff'*size
+        def flash_md5sum(self,offset,size):return hashlib.md5(b'\xff'*size).hexdigest()
+    def test_retry_preserves_verified_bytes(self):
+        old=self.Stub(True);new=self.Stub()
+        with patch('flash.connect',return_value=(new,'test-device')),patch('flash.time.sleep'):
+            data=read_backup(old,'test-device','test-port')
+        self.assertEqual(len(data),8388608);self.assertTrue(old.closed and new.closed)
+    def test_reconnect_rejects_another_device(self):
+        old=self.Stub(True);new=self.Stub()
+        with patch('flash.connect',return_value=(new,'other-device')),patch('flash.time.sleep'):
+            with self.assertRaises(ValueError):read_backup(old,'test-device','test-port')
+        self.assertTrue(old.closed and new.closed)
 if __name__=='__main__':unittest.main()

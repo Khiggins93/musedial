@@ -36,3 +36,5 @@ Commands: `status`, `snapshot`, `theme normal`, `theme halloween`, `mode N`, `pe
 `turn` and `click` use the physical input handlers but do not prove electrical operation. `snapshot` streams a 240 × 240 RGB565LE framebuffer and pauses rendering; exclude it from fps measurements.
 
 `status` is JSON: version, theme, mood, active_clip, animation, automatic, sleeping, brightness, free_heap, min_heap, uptime_ms, frames, max_frame_us, decode_errors, halloween_ready, asset_error, bats_active/count, temporary_selection, magic_charge (0–8), casting, tickled and physical event counters. These counters are not incremented by USB simulations.
+
+Optional hardware regression (changes modes and leaves Halloween awake/automatic): `python tools/hardware_test.py --port PORT`. It checks all expressions, USB interactions and 30 seconds per theme; its output stays in ignored `local/`. Do not touch the controls during timed measurements. This does not replace physical confirmation.

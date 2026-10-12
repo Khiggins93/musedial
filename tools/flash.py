@@ -1,5 +1,5 @@
 """Verified installation with mandatory local backup; identity-bound full restore."""
-import argparse,hashlib,json,subprocess,sys,uuid
+import argparse,hashlib,json,subprocess,sys,uuid,time
 from pathlib import Path
 from datetime import datetime,timezone,timedelta
 from halloween_format import layout,validate_assets
@@ -31,18 +31,36 @@ def connect(port):
         mac=':'.join(f'{v:02x}' for v in rom.read_mac())
         stub=rom.run_stub();stub.flash_spi_attach(0)
         if ((stub.flash_id()>>16)&255)!=23:raise ValueError('Expected 8 MiB flash; confirm the board model')
+        stub.flash_set_parameters(8388608)
+        stub.change_baud(460800)
         return stub,mac
     except BaseException:
         rom._port.close();raise
-def backup(stub,mac,base):
+def read_backup(stub,mac,port):
+    """Reconnect only into the loader on transient USB failure; never write flash."""
+    data=bytearray()
+    try:
+        # Bounded 16 KiB reads avoid native USB/JTAG receive stalls on Windows.
+        for offset in range(0,8388608,16384):
+            for attempt in range(4):
+                try:
+                    chunk=stub.read_flash(offset,16384)
+                    if len(chunk)!=16384 or hashlib.md5(chunk).hexdigest()!=stub.flash_md5sum(offset,16384):raise RuntimeError('Incomplete/corrupt backup chunk')
+                    break
+                except Exception:
+                    stub._port.close()
+                    if attempt==3:raise
+                    time.sleep(.5);stub,connected_mac=connect(port)
+                    if connected_mac!=mac:raise ValueError('Device changed during backup')
+            data.extend(chunk)
+            if len(data)%524288==0:print('Verified backup bytes:',len(data),flush=True)
+        if hashlib.md5(data).hexdigest()!=stub.flash_md5sum(0,len(data)):raise RuntimeError('Device backup digest mismatch')
+        return data
+    finally:stub._port.close()
+def backup(stub,mac,base,port):
     stamp=datetime.now(timezone(timedelta(hours=-5)))
     folder=Path(base)/(stamp.strftime('%Y%m%d-%H%M%S')+'-'+uuid.uuid4().hex[:8]);folder.mkdir(parents=True,exist_ok=False)
-    data=bytearray()
-    for offset in range(0,8388608,65536):
-        chunk=stub.read_flash(offset,65536)
-        if len(chunk)!=65536:raise RuntimeError('Incomplete backup read')
-        data.extend(chunk)
-    if hashlib.md5(data).hexdigest()!=stub.flash_md5sum(0,len(data)):raise RuntimeError('Device backup digest mismatch')
+    data=read_backup(stub,mac,port)
     (folder/'flash.bin').write_bytes(data)
     m={'chip':'esp32s3','mac':mac,'bytes':len(data),'sha256':sha(data),'created_bogota':stamp.isoformat()}
     (folder/'backup.json').write_text(json.dumps(m,indent=2))
@@ -61,7 +79,7 @@ def main():
     stub,mac=connect(a.port)
     try:
         if a.action=='restore':validate_backup(a.backup,mac)
-        backup(stub,mac,a.backups)
+        backup(stub,mac,a.backups,a.port)
     finally:stub._port.close()
     command=[sys.executable,'-m','esptool','--chip','esp32s3','--port',a.port,'--baud','115200','write-flash']
     if a.action=='restore':command+=['0x0',str(a.backup/'flash.bin')]

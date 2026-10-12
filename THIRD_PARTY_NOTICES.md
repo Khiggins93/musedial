@@ -6,6 +6,7 @@ The project does not relicense its dependencies. Exact source revisions are in `
 |---|---|---|
 | M5Unified 0.2.25 | https://github.com/m5stack/M5Unified | MIT; full notice in `licenses/M5Unified.txt` |
 | M5GFX 0.2.32 | https://github.com/m5stack/M5GFX | MIT plus upstream per-file notices; `licenses/M5GFX.txt` |
+| TJpgDec in M5GFX | http://elm-chan.org/fsw/tjpgd/00index.html | ChaN 2019 permissive notice; `licenses/TJpgDec.txt` |
 | M5Dial 1.0.3 | https://github.com/m5stack/M5Dial | Pinned revision has no top-level LICENSE; retain upstream per-file notices; no blanket Apache/MIT claim is made for this wrapper |
 | Encoder inside M5Dial | https://www.pjrc.com/teensy/td_libs_Encoder.html | Paul Stoffregen / PJRC, MIT-style notice in `licenses/Encoder.txt` |
 | MFRC522 inside M5Dial | https://github.com/arozcan/MFRC522-I2C-Library | Header declares public domain; RFID is disabled in this firmware |
