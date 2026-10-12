@@ -5,8 +5,8 @@
 | Acción / Input | Comportamiento / Behavior |
 |---|---|
 | Hold >3000 ms | Toggle theme exactly once while held; wake, reset effects, enable auto. Release does nothing else. |
-| Release at 1000–3000 ms | Toggle sleep; display does not sleep while still holding. |
-| Release before 1000 ms | Toggle auto. If asleep, only wake. During charge: cast only if full; during casting: consume click. |
+| Release at 1000–3000 ms | Toggle display-off sleep; the display stays on while still holding. |
+| Release before 1000 ms | Toggle auto. Idle-asleep: greet and keep auto. Display off: only wake display. During charge: cast only if full; during casting: consume click. |
 | Normal wheel | Select expression indefinitely; auto off. |
 | Halloween wheel | Select for 10 seconds then resume auto. At HECHIZO, further turns charge instead of selecting. |
 | Charge / Carga | Eight detents in either direction; expires 10 seconds after last turn. Short press at full charge casts for 6 seconds. Wheel/click during cast are consumed. Wait for charge timeout to resume selection. |

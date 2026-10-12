@@ -46,7 +46,7 @@ You can also [build from source](docs/BUILD.en.md). Committed animation resource
 |---|---|
 | Hold >3 seconds | Switch theme once, wake and enable automatic expressions |
 | Release between 1 and 3 seconds | Toggle sleep |
-| Short press | Toggle automatic; when asleep, only wake |
+| Short press | Toggle auto; idle-asleep: greet and keep auto; display off: only turn it on |
 | Wheel | Select an expression; Halloween resumes automatic after 10 seconds |
 | Light touch and drag | Normal gaze follows your finger; release to pet |
 | Repeated normal petting | Smile, affection, hug; hold touch for 2 seconds for a direct hug |
