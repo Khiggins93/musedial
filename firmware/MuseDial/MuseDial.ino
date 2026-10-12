@@ -9,14 +9,17 @@
 #include "halloween_assets.h"
 #include "button_actions.h"
 #include "play_effects.h"
+#include "companion.h"
+#include "companion_frames.h"
 
 static constexpr int SCREEN = 240;
 static constexpr int AVATAR = 192;
 static constexpr int ORIGIN = (SCREEN - AVATAR) / 2;
 static constexpr uint32_t FRAME_MS = 50;
 static constexpr uint32_t AUTO_MS = 16000;
-static constexpr char VERSION[] = "3.1.1-community";
+static constexpr char VERSION[] = "3.2.0-companion";
 static PlayEffects play;
+static Companion companion;
 static M5Canvas canvas(&M5Dial.Display);
 static uint32_t decodeErrors = 0;
 static int activeClip = 0;
@@ -58,7 +61,7 @@ static bool commandOverflow = false;
 static void showHint() { hintUntil = millis() + 2500; }
 
 static void setMood(int next) {
-    play.clear();
+    play.clear(); companion.clear();
     mood = ((next % moodCount()) + moodCount()) % moodCount();
     petted = false;
     modeSince = millis();
@@ -79,7 +82,7 @@ static void selectMood(int next) {
 }
 
 static void setSleeping(bool value) {
-    if(value) { play.clear(); petted=false; }
+    if(value) { play.clear(); companion.clear(); petted=false; }
     if(sleeping && !value) { wakeProtection=true;lastWakeAt=millis(); }
     sleeping = value;
     M5Dial.Display.setBrightness(value ? 0 : brightness);
@@ -88,6 +91,7 @@ static void setSleeping(bool value) {
 
 static void pet() {
     if (sleeping) setSleeping(false);
+    if(!halloween) { companion.pet(millis()); return; }
     petted = true;
     petSince = millis();
     if(halloween)play.touch(petSince);
@@ -112,6 +116,7 @@ static void clickButton() {
 }
 
 static void status() {
+    companion.update(millis());
     Serial.printf("{\"firmware\":\"MuseDial\",\"version\":\"%s\","
                   "\"board\":\"M5Stack Dial\",\"detected_dial\":%s,"
                   "\"display_ready\":%s,\"width\":%d,\"height\":%d,"
@@ -124,6 +129,7 @@ static void status() {
                   "\"theme\":\"%s\",\"halloween_ready\":%s,\"asset_error\":\"%s\","
                   "\"bats_active\":%s,\"bats_count\":%d,\"temporary_selection\":%s,"
                   "\"magic_charge\":%u,\"casting\":%s,\"tickled\":%s,"
+                  "\"companion\":\"%s\",\"affection\":%u,\"gaze_x\":%d,\"gaze_y\":%d,"
                   "\"network\":\"disabled\",\"audio\":\"disabled\"}\n",
                   VERSION, M5Dial.Display.getBoard() == m5::board_t::board_M5Dial ? "true" : "false",
                   displayReady ? "true" : "false", M5Dial.Display.width(), M5Dial.Display.height(),
@@ -135,7 +141,8 @@ static void status() {
                   halloweenAssets.error ? halloweenAssets.error : "none",
                   halloween && petted ? "true" : "false", halloween && petted ? 4 : 0,
                   temporarySelection ? "true" : "false",play.charge,
-                  play.casting ? "true" : "false",play.tickled ? "true" : "false");
+                  play.casting ? "true" : "false",play.tickled ? "true" : "false",
+                  companion.label(), companion.affection, companion.gazeX, companion.gazeY);
 }
 
 // Three wing poses; silhouettes are rendered without allocation each frame.
@@ -193,13 +200,18 @@ static void drawFrame(uint32_t now) {
     uint32_t size;
     const uint8_t* jpeg;
     if(halloween)jpeg=halloweenAssets.frame(frame,size);
+    else if(companion.active()) {
+        int cf=companion.frame(now); uint32_t offset=companion_offsets[cf];
+        jpeg=companion_jpeg+offset; size=companion_offsets[cf+1]-offset;
+    }
     else { uint32_t offset=avatar_offsets[frame]; jpeg=avatar_jpeg+offset;size=avatar_offsets[frame+1]-offset; }
     if (!jpeg || !canvas.drawJpg(jpeg, size, ORIGIN, ORIGIN)) {
         ++decodeErrors;
     }
     if (petted && halloween)drawBats(clipTime,frame);
     if(halloween)drawMagic(now);
-    if (petted && !halloween) {
+    if (!halloween && companion.gesture==Companion::Hug) {
+        clipTime=now-companion.gestureAt;
         for (int i = 0; i < 3; ++i) {
             int x = 55 + i * 65;
             int y = 65 - ((clipTime / 60 + i * 12) % 35);
@@ -230,6 +242,10 @@ static void drawFrame(uint32_t now) {
         canvas.drawString(play.casting ? "ABRACADABRA!" : play.tickled ? "JI JI JI!" : play.charge==8 ? "PULSA PARA LANZAR" : "GIRA PARA CARGAR",120,208);
         if(play.charge)for(int i=0;i<8;i++)canvas.fillRect(82+i*10,194,7,3,i<play.charge ? color : canvas.color565(45,30,50));
     }
+    if(!halloween && companion.active()) {
+        canvas.fillRect(30,202,180,13,TFT_BLACK);
+        canvas.drawString(companion.label(),120,208);
+    }
     canvas.pushSprite(0, 0);
     ++frameCount;
     uint32_t elapsed = micros() - startUs;
@@ -251,9 +267,15 @@ static void snapshot() {
 
 static void handleCommand() {
     command[commandLen] = 0;
-    int value;
+    int value, x, y;
     if (!strcmp(command, "status")) status();
     else if (!strcmp(command, "snapshot")) snapshot();
+    else if (!strcmp(command, "selftest companion")) { Serial.println(testCompanion() ? "OK selftest companion" : "ERROR selftest companion"); }
+    else if (sscanf(command,"touch %d %d",&x,&y)==2 && x>=0 && x<240 && y>=0 && y<240 && !halloween) {
+        if(sleeping)setSleeping(false);
+        companion.down(millis(),x,y); Serial.println("OK touch");
+    }
+    else if (!strcmp(command,"release") && !halloween) { companion.up(millis()); Serial.println("OK release"); }
     else if (!strcmp(command, "pet")) { pet(); Serial.println("OK pet"); }
     else if (!strcmp(command, "click")) { if(sleeping)setSleeping(false);else clickButton(); Serial.println("OK click"); }
     else if (!strcmp(command, "selftest play")) { Serial.println(testPlayEffects() ? "OK selftest play" : "ERROR selftest play"); }
@@ -325,7 +347,16 @@ void loop() {
         default: break;
     }
     auto touch = M5Dial.Touch.getDetail();
-    if (touch.wasPressed() && !M5Dial.BtnA.isPressed()) { ++touchCount; pet(); }
+    if(halloween) {
+        if(touch.wasPressed() && !M5Dial.BtnA.isPressed()) { ++touchCount; pet(); }
+    } else if(!M5Dial.BtnA.isPressed()) {
+        if(touch.wasPressed()) {
+            ++touchCount; if(sleeping)setSleeping(false);
+            companion.down(now,touch.x,touch.y);
+        }
+        if(touch.isPressed() && companion.touching)companion.move(touch.x,touch.y);
+        if(touch.wasReleased())companion.up(now);
+    } else if(companion.touching)companion.clear();
     long position = M5Dial.Encoder.read();
     long delta = position - encoderBase;
     if (delta >= 4 || delta <= -4) {
@@ -348,11 +379,12 @@ void loop() {
     }
     now = millis();  // Commands/snapshots may advance time or reset modeSince.
     play.update(now);
+    companion.update(now);
     if(temporarySelection && !sleeping && !petted && uint32_t(now-selectionSince)>=10000) {
         temporarySelection=false; automatic=true; setMood(mood+1);
     }
     if(petted && uint32_t(now-petSince)>=(halloween ? 5000u : 4000u))petted=false;
-    if (automatic && !sleeping && !petted && !play.casting && now - modeSince >= (halloween ? 8000u : AUTO_MS)) setMood(mood + 1);
+    if (automatic && !sleeping && !petted && !companion.active() && !play.casting && now - modeSince >= (halloween ? 8000u : AUTO_MS)) setMood(mood + 1);
     if (displayReady && !sleeping && now - lastFrame >= FRAME_MS) {
         lastFrame = now;
         drawFrame(millis());

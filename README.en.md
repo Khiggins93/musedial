@@ -10,6 +10,12 @@ I'm sharing the code, animations and tools so you can install it on your Dial, c
 
 I develop this project independently, with visual inspiration from Muse. I'm not affiliated with Meta or M5Stack, and MuseDial is not an official product. It does not contain Muse's AI models, backend or apps.
 
+## More personality in normal mode
+
+I added gaze tracking across nine screen zones, progressive petting, a hug and tickles. Touch lightly without clicking the mechanical button; see [controls](docs/CONTROLS.md) for gesture timings.
+
+<img src="docs/images/companion.gif" width="288" alt="Normal Muse gaze, petting and hug preview">
+
 ## Hardware
 
 - Original M5Stack **Dial**, Stamp-S3 / ESP32-S3, 8 MiB flash, no PSRAM.
@@ -33,8 +39,10 @@ You can also [build from source](docs/BUILD.en.md). Committed animation resource
 | Release between 1 and 3 seconds | Toggle sleep |
 | Short press | Toggle automatic; when asleep, only wake |
 | Wheel | Select an expression; Halloween resumes automatic after 10 seconds |
-| Touch | Pet; four orbiting bats in Halloween |
-| Three quick touches | Five seconds of Halloween tickles |
+| Light touch and drag | Normal gaze follows your finger; release to pet |
+| Repeated normal petting | Smile, affection, hug; hold touch for 2 seconds for a direct hug |
+| Halloween touch | Four orbiting bats |
+| Three quick touches | Tickles in either theme |
 | Select HECHIZO, turn 8 further detents, short press | Six-second spell with sparkles and three ghosts |
 
 [Complete controls and USB commands](docs/CONTROLS.md). Nine normal and twelve Halloween expressions. Interaction preferences are not written to flash; reboot starts in normal mode.

@@ -11,3 +11,10 @@ I developed the Halloween concept with AI-assisted image ideation, then rebuilt 
 Project-authored scripts and original contributions are licensed as described in `NOTICE`; no rights to third-party characters or trademarks are granted. Preserve attribution and avoid representing forks as official Muse, Meta or M5Stack products.
 
 Los renders intermedios se generan localmente y no se suben al repositorio. Los scripts reproducen las escenas y poses; la reproducción byte a byte puede variar entre versiones/plataformas de Blender. Los recursos publicados y sus hashes permiten instalar exactamente cada release sin volver a renderizar.
+
+For 3.2, I reused the same procedural character in `assets/render_companion.py`:
+nine directional gaze poses plus smile, affection, hug and tickle sequences.
+`assets/companion.blend` preserves the generated scene; `assets/pack_companion.py`
+packs its 145 frames into `firmware/MuseDial/companion_frames.cpp`. These are
+additional original renders, not external character assets. The JPEG data's
+SHA-256 is pinned as `companion_sha256` in the dependency lock file.

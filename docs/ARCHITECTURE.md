@@ -21,4 +21,6 @@ Halloween format: 48-byte little-endian header (`<8s10I`), magic `HWEEN3\0\0`, f
 
 Firmware validates dimensions, bounds, CRC, monotonic offsets, JPEG markers and row spans. Invalid data prevents Halloween activation while normal remains operational. Four bats switch apparent front/back depth using the silhouette mask. Ghosts and sparks are foreground overlays.
 
-Pure state machines in `button_actions.h` and `play_effects.h` define time thresholds and unsigned clock wrap behavior. No interaction preferences are continuously written to flash.
+Pure state machines in `button_actions.h`, `play_effects.h` and `companion.h` define time thresholds and unsigned clock wrap behavior. No interaction preferences are continuously written to flash.
+
+Normal companionship adds 145 flash-resident JPEGs (nine gaze poses, 32 smile, 32 affection, 40 hug, 32 tickle frames). It reuses the existing framebuffer and block decoder, with no extra canvas or heap allocation. Gaze uses nine pre-rendered directions with boundary hysteresis, not continuous real-time 3D. Finite gesture clips ease in and out; switching from an arbitrary base expression can still produce a visible cut.

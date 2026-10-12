@@ -10,6 +10,12 @@ Comparto el código, las animaciones y las herramientas para que puedas instalar
 
 Desarrollo este proyecto de forma independiente, inspirado visualmente en Muse. No estoy afiliado a Meta ni a M5Stack, y MuseDial no es un producto oficial. No incluye los servicios, modelos de IA ni aplicaciones de Muse.
 
+## Más cariño en el modo normal
+
+Añadí miradas que siguen nueve zonas de la pantalla, caricias progresivas, un abrazo y cosquillas. Toca sin presionar el botón mecánico; los [controles](docs/CONTROLS.md) explican los tiempos de cada gesto.
+
+<img src="docs/images/companion.gif" width="288" alt="Miradas, caricias y abrazo del Muse normal">
+
 ## Lo que necesitas
 
 - M5Stack **Dial**, basado en Stamp-S3 / ESP32-S3, flash de 8 MiB y sin PSRAM.
@@ -35,8 +41,10 @@ También puedes [compilar desde las fuentes](docs/BUILD.md), sin instalar Blende
 | Soltar entre 1 y 3 s | Alternar reposo |
 | Pulsación breve | Alternar automático; si estaba dormido, solo despertar |
 | Rueda | Elegir expresión; en Halloween vuelve al automático tras 10 s |
-| Un toque | Caricia; cuatro murciélagos en Halloween |
-| Tres toques rápidos | Cosquillas Halloween durante 5 s |
+| Toque y deslizamiento suave | Sigue tu dedo con la mirada en normal; al soltar, caricia |
+| Caricias normales sucesivas | Sonrisa, cariño y abrazo; contacto táctil de 2 s para abrazo directo |
+| Un toque en Halloween | Cuatro murciélagos |
+| Tres toques rápidos | Cosquillas en ambos temas |
 | Elegir HECHIZO, girar 8 pasos adicionales y pulsar | Destellos y tres fantasmitas durante 6 s |
 
 [Detalles, excepciones y comandos USB](docs/CONTROLS.md). Incluye nueve expresiones normales y doce Halloween. No guarda preferencias de interacción en flash: tras reiniciar vuelve a normal.

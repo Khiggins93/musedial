@@ -193,9 +193,11 @@ for mood in range(9):
             glint.keyframe_insert(data_path='hide_render',frame=frame)
 scene.frame_start=1; scene.frame_end=9*N
 scene.frame_set(1)
-bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'assets/musedial.blend'))
+if '--scene-only' not in sys.argv:
+    bpy.ops.wm.save_as_mainfile(filepath=str(ROOT/'assets/musedial.blend'))
 preview='--preview' in sys.argv
 frames=[1,41,81,121,161,201,241,281,321] if preview else range(1,9*N+1)
+if '--scene-only' in sys.argv: frames=[]
 for frame in frames:
     path=OUT/f'{frame:04}.png'
     if path.exists() and '--force' not in sys.argv: continue

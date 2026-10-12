@@ -14,7 +14,7 @@ def main():
             def cmd(c):return request(p,c)
             def state():return cmd('status')
             initial=state();report['initial']=initial
-            check('community version',initial['version']=='3.1.1-community')
+            check('community version',initial['version']==json.loads((Path(__file__).resolve().parents[1]/'dependencies.lock.json').read_text())['version'])
             check('hardware ready',initial['detected_dial'] and initial['display_ready'] and initial['halloween_ready'] and initial['psram_bytes']==0)
             for name in ('input','assets','play'):check('selftest '+name,cmd('selftest '+name)=='OK selftest '+name)
             for theme,count in [('normal',9),('halloween',12)]:
