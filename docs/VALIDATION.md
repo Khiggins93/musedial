@@ -1,6 +1,6 @@
 # Validación / Validation
 
-This document separates measured hardware results from automated build checks. The public code preserves the animation assets and interaction state machines of the private 3.1 baseline, with the unused SDK pixel renderer removed.
+Here I document the results measured on my Dial separately from automated build checks. For the public version, I kept the animation assets and interaction state machines from my private 3.1 baseline and removed the unused SDK pixel renderer.
 
 ## Baseline 3.1 (not a new public-build measurement)
 
@@ -8,7 +8,7 @@ On the original M5Stack Dial: 93 functional regression checks, five minutes alte
 
 ## Community 3.1.1
 
-Measured on 2026-10-12 (America/Bogota), using the Windows-built community application on an original M5Stack Dial:
+I collected these measurements on 2026-10-12 (America/Bogota), using the Windows-built community application on my original M5Stack Dial:
 
 | Check | Result |
 |---|---|
@@ -29,4 +29,4 @@ The repository test suite validates resource checksums, corrupt/truncated images
 
 These are USB/software checks on real hardware, not a new physical-user confirmation of wheel/touch/button operation. The longer five-minute baseline measurement above belongs to 3.1 and is not attributed to this public build. Windows hardware flashing and Linux clean compilation were verified; macOS hardware operation was not tested.
 
-Raw local logs, device identifiers, flash backups and personal paths are intentionally excluded. CI workflow output is available in the public Actions tab.
+I have excluded raw local logs, device identifiers, flash backups and personal paths from the repository. You can inspect the CI workflow output in the public Actions tab.

@@ -2,11 +2,13 @@
 
 [Español](README.md) · [Install](docs/INSTALL.en.md) · [Build](docs/BUILD.en.md) · [Controls](docs/CONTROLS.md)
 
-An animated companion for **M5Stack Dial**: a prerendered 3D character, petting, Halloween costumes, orbiting bats, tickles and wheel-charged spells. Entirely **offline**: no account, SDK token, microphone or speaker required.
+I created **MuseDial** because I wanted to bring my **M5Stack Dial** to life with an animated companion inspired by Muse. I started with the character and added petting, a Halloween theme, orbiting bats, tickles and wheel-charged spells. It runs entirely **offline**: no account, SDK token, microphone or speaker required.
+
+I'm sharing the code, animations and tools so you can install it on your Dial, customize it and contribute your own ideas. These guides document how I built it and what I could verify on my hardware.
 
 <p><img src="docs/images/normal.png" width="240" alt="Normal character"><img src="docs/images/spell.png" width="240" alt="Halloween spell"><img src="docs/images/tickles.png" width="240" alt="Tickles"></p>
 
-An independent community project by **Khiggins93**, visually inspired by Muse. Not an official product or affiliated with Meta or M5Stack. It does not contain Muse's AI models, backend or apps.
+I develop this project independently, with visual inspiration from Muse. I'm not affiliated with Meta or M5Stack, and MuseDial is not an official product. It does not contain Muse's AI models, backend or apps.
 
 ## Hardware
 
@@ -15,7 +17,7 @@ An independent community project by **Khiggins93**, visually inspired by Muse. N
 - USB-C **data** cable and Windows, Linux or macOS computer. USB power; no additional wiring or peripherals.
 - Python 3.12 to install release binaries. Git and Arduino CLI 1.5.1 to compile; Blender 5.2.1 only to regenerate animations.
 
-Only the original **M5Stack Dial** has been physically tested. An ESP32-S3 with 8 MiB flash is not automatically a compatible board. [Official hardware documentation](https://docs.m5stack.com/en/core/Dial).
+I used my original **M5Stack Dial** for physical testing; I haven't validated other boards. An ESP32-S3 with 8 MiB flash is not automatically a compatible board. [Official hardware documentation](https://docs.m5stack.com/en/core/Dial).
 
 ## Get started
 
@@ -43,4 +45,4 @@ Blender renders 192 × 192 sequences at 20 fps. Block-based JPEG decoding works 
 
 [Architecture](docs/ARCHITECTURE.md) · [Assets](docs/ASSETS.md) · [Validation](docs/VALIDATION.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md).
 
-Original code is licensed under [Apache 2.0](LICENSE). See [NOTICE](NOTICE) and [third-party notices](THIRD_PARTY_NOTICES.md). No rights to third-party characters or trademarks are granted. External reference photographs and original SDK avatar files are not distributed.
+I'm sharing my original code under [Apache 2.0](LICENSE). See [NOTICE](NOTICE) and [third-party notices](THIRD_PARTY_NOTICES.md). No rights to third-party characters or trademarks are granted. I don't distribute external reference photographs or original SDK avatar files here.

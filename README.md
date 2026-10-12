@@ -2,11 +2,13 @@
 
 [English](README.en.md) · [Instalar](docs/INSTALL.md) · [Compilar](docs/BUILD.md) · [Controles](docs/CONTROLS.md)
 
-Un compañero animado para **M5Stack Dial**: personaje 3D prerenderizado, caricias, modo Halloween, murciélagos, cosquillas y hechizos que cargas girando la rueda. Funciona completamente **sin conexión**, sin cuenta, token, micrófono ni bocina.
+Creé **MuseDial** porque quería darle vida a mi **M5Stack Dial** con un compañero animado inspirado en Muse. Empecé con el personaje y fui añadiendo caricias, modo Halloween, murciélagos, cosquillas y hechizos que cargas girando la rueda. Funciona completamente **sin conexión**, sin cuenta, token, micrófono ni bocina.
+
+Comparto el código, las animaciones y las herramientas para que puedas instalarlo en tu Dial, modificarlo y aportar tus propias ideas. En estas guías documento cómo lo construí y qué pude comprobar en mi equipo.
 
 <p><img src="docs/images/normal.png" width="240" alt="Personaje normal"><img src="docs/images/spell.png" width="240" alt="Hechizo Halloween"><img src="docs/images/tickles.png" width="240" alt="Cosquillas"></p>
 
-Proyecto comunitario independiente de **Khiggins93**, inspirado visualmente en Muse. No es un producto oficial ni está afiliado a Meta o M5Stack. No incluye los servicios, modelos de IA ni aplicaciones de Muse.
+Desarrollo este proyecto de forma independiente, inspirado visualmente en Muse. No estoy afiliado a Meta ni a M5Stack, y MuseDial no es un producto oficial. No incluye los servicios, modelos de IA ni aplicaciones de Muse.
 
 ## Lo que necesitas
 
@@ -15,7 +17,7 @@ Proyecto comunitario independiente de **Khiggins93**, inspirado visualmente en M
 - Cable USB-C **de datos** y un computador con Windows, Linux o macOS. Alimentación por USB; no hay cableado ni periféricos adicionales.
 - Python 3.12 para instalar binarios; Git y Arduino CLI 1.5.1 para compilar. Blender 5.2.1 solo si quieres regenerar las animaciones.
 
-Solo se ha probado físicamente el **M5Stack Dial original**. Detectar un ESP32-S3 de 8 MiB no identifica automáticamente la pantalla ni los pines de otras placas. [Ficha oficial del equipo](https://docs.m5stack.com/en/core/Dial).
+Para las pruebas físicas utilicé mi **M5Stack Dial original**; no he validado otras placas. Detectar un ESP32-S3 de 8 MiB no identifica automáticamente la pantalla ni los pines de otras placas. [Ficha oficial del equipo](https://docs.m5stack.com/en/core/Dial).
 
 ## Comenzar
 
@@ -47,4 +49,4 @@ Blender genera secuencias de 192 × 192, a 20 cuadros/s. El firmware decodifica 
 
 ## Licencia
 
-Código propio bajo [Apache 2.0](LICENSE). Consulta [NOTICE](NOTICE) y [avisos de terceros](THIRD_PARTY_NOTICES.md). La licencia no concede derechos sobre marcas o personajes de terceros. Las fotografías externas de referencia y los recursos originales del SDK no se distribuyen aquí.
+Comparto el código propio bajo [Apache 2.0](LICENSE). Consulta [NOTICE](NOTICE) y [avisos de terceros](THIRD_PARTY_NOTICES.md). La licencia no concede derechos sobre marcas o personajes de terceros. No distribuyo aquí las fotografías externas de referencia ni los recursos originales del SDK.

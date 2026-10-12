@@ -1,6 +1,8 @@
 # Contribuir / Contributing
 
-Issues and pull requests are welcome in Spanish or English. Discuss new boards and major control changes before implementation. Keep the offline/no-PSRAM baseline operational.
+Comparto MuseDial para que puedas experimentar con él y ayudarme a mejorarlo. Puedes abrir issues y pull requests en español o inglés. Antes de añadir soporte para otras placas o cambiar los controles principales, conversemos en un issue.
+
+I'm sharing MuseDial so you can experiment with it and help me improve it. I welcome issues and pull requests in Spanish or English. Please discuss new boards and major control changes with me in an issue before implementation. Keep the offline/no-PSRAM baseline operational.
 
 1. Fork and create a branch.
 2. Follow `docs/BUILD.md` or `docs/BUILD.en.md` using pinned dependencies.
