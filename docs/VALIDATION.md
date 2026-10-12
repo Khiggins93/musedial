@@ -68,3 +68,23 @@ run. I also physically confirmed gaze tracking and the hold/release hug.
 This is not a new 30-minute soak; the remaining new interactions were tested over USB.
 The gaze uses nine discrete rendered poses. Finite gesture clips ease in/out;
 transitions from arbitrary base expressions are not cross-faded.
+
+## Dreams 3.2.1
+
+Probé las Z de sueño en mi Dial el 2026-10-12 (America/Bogota): pasaron
+22 comprobaciones USB, incluidas las cuatro expresiones, la ocultación durante
+caricias/reposo y su reaparición. Medí cuatro intervalos de diez segundos,
+sin capturas durante la medición: **19,610–19,727 fps**, **219072 bytes libres
+constantes**, cero errores de decodificación y cero reinicios observados.
+La aplicación instalada ocupa 2866992 bytes. El respaldo completo anterior se
+verificó antes de escribir. Las 15 pruebas, compilación y verificación del paquete
+pasaron en [CI Linux](https://github.com/Khiggins93/musedial/actions/runs/38305824206).
+
+Estas imágenes son capturas reales del framebuffer del dispositivo:
+
+<img src="images/normal-sleep.png" width="240" alt="Normal con Z de sueño"><img src="images/halloween-sleep.png" width="240" alt="Halloween con Z de sueño">
+
+I verified all four sleepy expressions, effect cancellation and recovery through
+22 USB checks. Four ten-second measurement windows yielded 19.610–19.727 fps,
+constant free heap and no observed decoder errors or resets. These results are
+separate from the five-minute 3.2 measurements above.
